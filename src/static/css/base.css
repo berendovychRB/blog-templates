@@ -1,0 +1,9 @@
+
+.wmd-panel{
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+
+textarea.form-control{
+    height: 150px;
+}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Home | {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="col-sm-6 col-sm-offset-3">
+        <h1>News:</h1>
+
+        <form method="GET" action="">
+            <div class="input-group">
+                <input class="form-control" type="text" name="q" placeholder="Search posts" value="{{ request.GET.q }}"/>
+                <span class="input-group-btn">
+{#                    <input class="btn btn-default" type="submit" value="Search">#}
+                    <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </form>
+    <p></p>
+
+        {% for post in posts %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="thumbnail">
+                        <div class="caption post-detail-item">
+                            {% if post.image %}
+                                <img src="{{ post.image.url }}" alt="" class="img-responsive"/>
+                            {% endif %}
+                            {% if post.draft %}<h4 style="color:red">Draft</h4>{% endif %}
+                            {% if post.publish > today %}<h4 style="color:red">Future Post</h4>{% endif %}
+                            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                                <small>{{ post.publish|timesince }} ago</small>
+                            </h3>
+                            {% if post.user.get_full_name %}<p>Author: {{ post.user.get_full_name }}</p>{% endif %}
+                            {{ post.get_markdown|truncatewords_html:10 }}
+                            <p><a href="{{ post.get_absolute_url }}" class="btn btn-primary" role="button">View</a></p>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        {% endfor %}
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if posts.has_previous %}
+                    <a href="?{{ page_request_var }}=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo; first</a> |
+                    <a href="?{{ page_request_var }}={{ posts.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+                </span>
+
+                {% if posts.has_next %}
+                    <a href="?{{ page_request_var }}={{ posts.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a> |
+                    <a href="?{{ page_request_var }}={{ posts.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+
+{% endblock content %}

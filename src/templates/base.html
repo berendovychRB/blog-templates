@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}News{% endblock title %}</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="{% static '/css/base.css' %}">
+    {% block head_extra %}
+    {% endblock head_extra %}
+</head>
+<body>
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/ru_RU/sdk.js#xfbml=1&version=v8.0"
+        nonce="92IqUF1O"></script>
+
+{% include 'messages.html' %}
+
+<div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'create' %}">Create</a></li>
+        {% block post_detail %}
+        {% endblock post_detail %}
+        {#        <li><a href="{% url 'home' %}">Posts</a></li>#}
+
+        {% if not request.user.is_authenticated %}
+            <li class="pull-right"><a href="{% url 'register' %}">Register</a></li>
+            <li class="pull-right"><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+
+            <li class="pull-right"><a href="{% url 'logout' %}">Logout</a></li>
+            {% if request.user.first_name and request.user.last_name %}
+                <li class="pull-right">{{ request.user.first_name }} {{ request.user.last_name }}</li>
+            {% else %}
+                <li class="pull-right">{{ request.user }}</li>
+            {% endif %}
+        {% endif %}
+    </ol>
+
+    {% block content %}{% endblock content %}
+</div>
+
+
+<!-- Latest compiled and minified JavaScript -->
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.1/marked.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".content-markdown").each(function () {
+            var content = $(this).text()
+            var markedContent = marked(content)
+            $(this).html(markedContent)
+        })
+        $(".post-detail-item img").each(function () {
+            $(this).addClass("img-responsive");
+        })
+
+        var titleItem = $("#id_title")
+        $("#preview_title").text(titleItem.val())
+
+
+        var contentItem = $("#id_content");
+        $('#preview_content').text(contentItem.val())
+
+        {# For hidden comments#}
+        $(".comment-reply-btn").click(function (event) {
+            event.preventDefault();
+            $(this).parent().next(".comment-reply").fadeToggle();
+
+        })
+    })
+</script>
+
+</body>
+</html>
+
+
